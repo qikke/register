@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>register</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #registerForm {
+      border: 1px solid black;
+
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <form method="POST" id="registerForm">
+    <div class="row">
+      <Label>账号：</Label>
+      <input type="text" name="account">
+    </div>
+    <div class="row">
+      <Label>密码：</Label>
+      <input type="text" name="password">
+    </div>
+    <div class="row">
+      <Label>确认密码：</Label>
+      <input type="text" name="passwordConfirm">
+    </div>
+    <div class="row">
+      <button type="submit">注册</button>
+    </div>
+  </form>
+
+  <script>
+    ! function () {
+      let $form = $('#registerForm')
+      $form.on('submit', (e) => {
+        e.preventDefault()
+        //拿到需要的表单信息
+        let requirement = ['account', 'password', 'passwordConfirm']
+        let info = {}
+        requirement.forEach((value) => {
+          info[value] = $form.find(`[name=${value}]`).val()
+        })
+        let {
+          account,
+          password,
+          passwordConfirm
+        } = info
+
+
+        //前端验证示例
+        if (password !== passwordConfirm) {
+          alert("两次密码不一样")
+          //清空表单
+          $form.find('input').val('')
+          return
+        }
+        if (account == '' || password == '' || passwordConfirm == '') {
+          alert("信息不能为空")
+          //清空表单
+          $form.find('input').val('')
+          return
+        }
+
+        //后台验证
+        $.post('/verification', info).then(() => {
+          alert("登录成功！")
+        }, (response) => {
+          let {error} = response.responseJSON
+          alert(error)
+        })
+
+      })
+
+
+    }()
+  </script>
+</body>
+
+</html>
